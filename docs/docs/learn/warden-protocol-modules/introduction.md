@@ -4,11 +4,11 @@ sidebar_position: 1
 
 # Introduction
 
----EDIT---
+Warden Protocol is a Layer 1 blockchain built with [Cosmos
+SDK](https://docs.cosmos.network/). Modules contains most of the logic of the
+Warden Protocol and users can interact with them by sending transaction or
+querying the node.
 
-Contents:
+`x/intent` is the intent engine. It can execute arbitrary messages when certain conditions (typically user-defined) are met.
 
-- An introductions to modules
-- An overview of the section
-
-**Note:** Do we need anything else besides warden, intent, and gmp?
+`x/warden` contains the implementation of the core concept of Warden Protocol, such as Space, Keychains, Keys, etc.
