@@ -1,50 +1,33 @@
 import clsx from "clsx";
+import type Long from "long";
 import { Icons } from "@/components/ui/icons-assets";
-import { useQueryHooks } from "@/hooks/useClient";
-import { useAddressContext } from "@/hooks/useAddressContext";
 import { useMemo } from "react";
+import { bigintToFixed } from "@/lib/math";
+import type { DecCoin } from "@wardenprotocol/wardenjs/codegen/cosmos/base/v1beta1/coin";
 
 const DAY_SEC = 86400;
 
-const toFixed = (v: bigint, decimals: number) => {
-	const unit = BigInt(10) ** BigInt(decimals);
-	const int = v / unit;
-	const fra = v % unit;
-
-	if (!fra) {
-		return int.toString(10);
-	}
-
-	return `${int}.${fra.toString(10).padStart(decimals, "0")}`;
+interface HeadingProps {
+	availableWard?: bigint;
+	stakedWard?: bigint;
+	unbondingSeconds?: Long;
+	total?: DecCoin[];
+	claim: () => Promise<void>;
 }
 
-export default function StakingHeading() {
-	const { address } = useAddressContext();
-
-	const {
-		cosmos: {
-			distribution: { v1beta1: distribution },
-			staking: { v1beta1: staking },
-		},
-	} = useQueryHooks();
-
-	const params = staking.useParams({ request: {} }).data?.params;
-	const unbondingDays = params?.unbondingTime.seconds.div(DAY_SEC).toString();
-
-	const totalRewards = distribution.useDelegationTotalRewards({
-		request: { delegatorAddress: address },
-	}).data;
+export default function StakingHeading(props: HeadingProps) {
+	const unbondingDays = props.unbondingSeconds?.div(DAY_SEC).toString();
 
 	const rewardsWard = useMemo(
 		() =>
-			totalRewards?.total.reduce(
+			props.total?.reduce(
 				(total, item) =>
 					item.denom !== "uward"
 						? total
 						: total + BigInt(item.amount),
 				BigInt(0),
 			),
-		[],
+		[props.total],
 	);
 
 	return (
@@ -56,14 +39,20 @@ export default function StakingHeading() {
 				<div className="h-3" />
 				<div className="flex items-center gap-[6px] text-xl font-bold">
 					<Icons.logoWhite />
-					120,345.34
+					{bigintToFixed(props.availableWard ?? BigInt(0), {
+						decimals: 6,
+						format: true
+					})}
 				</div>
 			</div>
 			<div className="bg-tertiary border-border-secondary border-[1px] rounded-xl	px-6 py-6">
 				<div className="text-secondary-text text-sm">Staked WARD</div>
 				<div className="h-3" />
 				<div className="flex items-center gap-[6px] text-xl font-bold">
-					10,350,456.01
+					{bigintToFixed(props.stakedWard ?? BigInt(0), {
+						decimals: 6,
+						format: true
+					})}
 				</div>
 			</div>
 			<div className="bg-tertiary border-border-secondary border-[1px] rounded-xl	px-6 py-6">
@@ -91,8 +80,11 @@ export default function StakingHeading() {
 				<div className="text-secondary-text text-sm">Rewards WARD</div>
 				<div className="h-3" />
 				<div className="flex items-center gap-[6px] text-xl font-bold">
-					{toFixed(rewardsWard ?? BigInt(0), 6)}
-					<button className="ml-auto font-semibold text-pixel-pink text-base	">
+					{bigintToFixed(rewardsWard ?? BigInt(0), { decimals: 6, format: true })}
+					<button
+						className="ml-auto font-semibold text-pixel-pink text-base	"
+						onClick={props.claim}
+					>
 						Claim
 					</button>
 				</div>

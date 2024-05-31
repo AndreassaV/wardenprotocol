@@ -1,4 +1,5 @@
 import { Icons } from "@/components/ui/icons-assets";
+import { bigintToFixed } from "@/lib/math";
 import type { Amount } from "@/utils/interfaces";
 
 import {
@@ -11,10 +12,17 @@ import clsx from "clsx";
 interface ValidatorProps extends Validator {
 	openStakeModal: (address: string) => void;
 	stakedAmount?: Amount;
+	bondedTokens?: bigint;
 }
+
+const B0 = BigInt(0);
+const B10000 = BigInt(10000);
 
 export default function ValidatorRow(props: ValidatorProps) {
 	const status: BondStatus = props.status;
+	const votingPower = props.bondedTokens
+		? (BigInt(props.tokens) * B10000) / props.bondedTokens
+		: B0;
 
 	return (
 		<div className="grid grid-cols-[1fr_150px_150px_150px_200px] gap-3 h-[72px]  border-t-[1px] border-secondary-bg">
@@ -38,7 +46,9 @@ export default function ValidatorRow(props: ValidatorProps) {
 				%
 			</div>
 
-			<div className="flex flex-col justify-center">100%</div>
+			<div className="flex flex-col justify-center">
+				{bigintToFixed(votingPower, { decimals: 2 })}%
+			</div>
 
 			<div className="flex flex-col justify-center">
 				<div className="flex items-center gap-1">
