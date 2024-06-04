@@ -85,7 +85,7 @@ const StakeModal = ({
 						onSubmit={(e) => e.preventDefault()}
 					>
 						<div className="relative z-50 bg-secondary-bg rounded-lg pl-5 pr-3 flex items-center justify-between gap-2">
-							<Icons.logoWhite />
+							<Icons.logoPink />
 							<input
 								className={clsx(
 									"block w-full h-[60px] bg-transparent outline-none foces:outline-none",

@@ -2,6 +2,7 @@ import Portal from "@/components/ui/portal";
 import { useState } from "react";
 import SignTranactionModal from "../assets/SignTransactionModal";
 import RedelegateModal from "./RedelegateModal";
+import { Icons } from "@/components/ui/icons-assets";
 
 const StakedModal = ({ onHide }: { onHide: () => void }) => {
 	const [isSign, setIsSign] = useState(false);
@@ -9,12 +10,14 @@ const StakedModal = ({ onHide }: { onHide: () => void }) => {
 
 	if (isSign) return <SignTranactionModal onHide={() => setIsSign(false)} />;
 
-    if (isRedelegateModal) {
-      return <RedelegateModal
-                onHide={() => setIsRedelegate(false)}
-                onHideAll={onHide}
-            />
-    }
+	if (isRedelegateModal) {
+		return (
+			<RedelegateModal
+				onHide={() => setIsRedelegate(false)}
+				onHideAll={onHide}
+			/>
+		);
+	}
 	return (
 		<Portal domId="intent-modal">
 			<div className="bg-overlay absolute left-0 top-0 w-full h-full backdrop-blur-[20px] flex items-center justify-center min-h-[600px]">
@@ -36,11 +39,18 @@ const StakedModal = ({ onHide }: { onHide: () => void }) => {
 						</div>
 
 						<div className="flex justify-between items-center mb-5 py-1">
-							<div>
-								<div className="text-xs text-tertiary-text">
-									Validator
+							<div className="flex items-center gap-3">
+								<img
+									src="/images/chorus.png"
+									alt=""
+									className="w-10 h-10 object-contain"
+								/>
+								<div>
+									<div className="text-xs text-tertiary-text">
+										Validator
+									</div>
+									<div>Chorus One</div>
 								</div>
-								<div>Chorus One</div>
 							</div>
 							<button
 								onClick={() => setIsRedelegate(true)}
@@ -51,11 +61,14 @@ const StakedModal = ({ onHide }: { onHide: () => void }) => {
 						</div>
 
 						<div className="flex justify-between items-center py-1">
-							<div>
-								<div className="text-xs text-tertiary-text">
-									Rewards
+							<div className="flex items-center gap-3">
+								<Icons.logoPink className="w-10 h-10 object-contain" />
+								<div>
+									<div className="text-xs text-tertiary-text">
+										Rewards
+									</div>
+									<div>10 WARD</div>
 								</div>
-								<div>10 WARD</div>
 							</div>
 							<button
 								onClick={() => setIsSign(true)}
@@ -82,8 +95,6 @@ const StakedModal = ({ onHide }: { onHide: () => void }) => {
 					</div>
 				</div>
 			</div>
-
-
 		</Portal>
 	);
 };

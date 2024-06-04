@@ -11,6 +11,7 @@ import { useAddressContext } from "@/hooks/useAddressContext";
 import { useClient, useQueryHooks } from "@/hooks/useClient";
 import { useToast } from "@/components/ui/use-toast";
 import { monitorTx } from "@/hooks/keplr";
+import StakedModal from "@/features/staking/StakedDetailsModal";
 
 export function StakingPage() {
 	const [activeTab, setActiveTab] = useState("validators");
