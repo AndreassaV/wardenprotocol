@@ -1,58 +1,141 @@
-import { useState } from "react";
 import clsx from "clsx";
+import { useMemo, useState } from "react";
 import SignTranactionModal from "@/features/assets/SignTransactionModal";
 import { Icons } from "@/components/ui/icons-assets";
 import GovernanceRow from "@/features/governance/ItemRow";
 import GovernanceCard from "@/features/governance/ItemCard";
 import DetailsModal from "@/features/governance/DetailsModal";
 import CantVoteModal from "@/features/governance/CantVoteModal";
+import { useQueryHooks } from "@/hooks/useClient";
+import { ProposalStatus } from "@wardenprotocol/wardenjs/codegen/cosmos/gov/v1/gov";
+import { ProposalParsed } from "@/features/governance/types";
+import { parseMetadata, parseTimestamp } from "@/features/governance/util";
 
 const PLACEHOLDER = [
 	{
+		id: "11",
 		name: "Signaling Proposal: Creation some text and more more",
-		status: "Voting",
-		votes: 12341,
+		status: ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1717077597194),
 		votingEnd: new Date(1717477597194),
 	},
 	{
+		id: "12",
 		name: "Signaling Proposal: Creation some text",
-		status: "Passed",
-		votes: 1123,
+		status: ProposalStatus.PROPOSAL_STATUS_PASSED,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1717077597194),
 		votingEnd: new Date(1717477597194),
 	},
 	{
+		id: "13",
 		name: "Signaling Proposal: Creation some text",
-		status: "Rejected",
-		votes: 19941,
+		status: ProposalStatus.PROPOSAL_STATUS_REJECTED,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1711077597194),
 		votingEnd: new Date(1717877597194),
 	},
 	{
+		id: "14",
 		name: "Signaling Proposal: Creation some text",
-		status: "Failed",
-		votes: 1241,
+		status: ProposalStatus.PROPOSAL_STATUS_FAILED,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1707077597194),
 		votingEnd: new Date(1737477597194),
 	},
 	{
+		id: "15",
 		name: "Signaling Proposal: Creation some text and more more",
-		status: "Voting",
-		votes: 12341,
+		status: ProposalStatus.PROPOSAL_STATUS_VOTING_PERIOD,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1717077597194),
 		votingEnd: new Date(1717477597194),
 	},
 	{
+		id: "16",
 		name: "Signaling Proposal: Creation some text",
-		status: "Passed",
-		votes: 1123,
+		status: ProposalStatus.PROPOSAL_STATUS_PASSED,
+		abstainVotes: 10000000,
+		noVotes: 10000,
+		noWithVetoVotes: 60000,
+		yesVotes: 123456789,
 		votingStart: new Date(1717077597194),
 		votingEnd: new Date(1717477597194),
 	},
 ];
 
+const useGovernance = () => {
+	const {
+		cosmos: {
+			gov: { v1: governance },
+		},
+	} = useQueryHooks();
+
+	const proposalsQuery = governance.useProposals({
+		request: {
+			proposalStatus: ProposalStatus.PROPOSAL_STATUS_UNSPECIFIED,
+			voter: "",
+			depositor: "",
+		},
+	});
+
+	const proposals: ProposalParsed[] = useMemo(() => {
+		if (!proposalsQuery.data) {
+			return [];
+		}
+
+		return [
+			// ...PLACEHOLDER,
+			...proposalsQuery.data.proposals.map((proposal) => {
+				const {
+					id: proposalId,
+					finalTallyResult,
+					metadata,
+					status,
+					votingStartTime,
+					votingEndTime,
+				} = proposal;
+
+				const id = proposalId.toString(10);
+				const { description, title: name } = parseMetadata(metadata);
+
+				return {
+					id,
+					description,
+					name,
+					status,
+					hasVotes: Boolean(finalTallyResult),
+					abstainVotes: Number(finalTallyResult?.abstainCount),
+					noVotes: Number(finalTallyResult?.noCount),
+					noWithVetoVotes: Number(finalTallyResult?.noWithVetoCount),
+					yesVotes: Number(finalTallyResult?.yesCount),
+					votingStart: new Date(parseTimestamp(votingStartTime)),
+					votingEnd: new Date(parseTimestamp(votingEndTime)),
+				};
+			}),
+		];
+	}, [proposalsQuery.data]);
+	return { proposals };
+};
+
 export function GovernancePage() {
+	const { proposals } = useGovernance();
 	const [sortDropdown, setSortDropdown] = useState("");
 	const [layout, setLayout] = useState<"list" | "grid">("list");
 
@@ -333,7 +416,7 @@ export function GovernancePage() {
 					</div>
 				)}
 
-				{PLACEHOLDER.map((item, key) => {
+				{proposals.map((item, key) => {
 					if (layout == "list") {
 						return (
 							<div>
