@@ -52,12 +52,9 @@ import {
 	SettingsPage,
 	StakingPage,
 } from "./pages";
-<<<<<<< HEAD
 import { GovernancePage } from "./pages/Governance.tsx";
 import { hashQueryKey } from "./utils/queryKeyHash.ts";
-=======
 import { DashboardPage } from "./pages/Dashboard.tsx";
->>>>>>> cdfae060 (feat(spaceward): Add new Dashboard page)
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -159,7 +156,6 @@ function App() {
 														}
 													/>
 													<Route
-<<<<<<< HEAD
 														path="/staking"
 														element={
 															<StakingPage />
@@ -169,11 +165,12 @@ function App() {
 														path="/governance"
 														element={
 															<GovernancePage />
-=======
+														}
+													/>
+													<Route
 														path="/dashboard"
 														element={
 															<DashboardPage />
->>>>>>> cdfae060 (feat(spaceward): Add new Dashboard page)
 														}
 													/>
 													<Route

@@ -1,10 +1,9 @@
 import { Icons } from "@/components/ui/icons-assets";
 import { useQueryHooks } from "@/hooks/useClient";
-import Long from "long";
 
 const ActiveIntent = ({ activeIntentId }: { activeIntentId: number }) => {
 	const intent = useQueryHooks().warden.intent.useIntentById({
-		request: { id: Long.fromInt(activeIntentId) },
+		request: { id: BigInt(activeIntentId) },
 	});
 
 	return (
