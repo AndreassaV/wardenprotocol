@@ -1,22 +1,20 @@
 import { LoaderCircle } from "lucide-react";
-import { useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AddressType } from "@wardenprotocol/wardenjs/codegen/warden/warden/v1beta2/key";
 import { Icons } from "@/components/ui/icons-assets";
 import { NewKeyButton } from "@/features/keys";
 import { useQueryHooks } from "@/hooks/useClient";
 import Key from "./Key";
-import type { DashboardDispatch } from "./types";
 import DashboardGraph from "./DashboardGraph";
 import { useIntents } from "@/pages";
 import Intent from "./Intent";
 
 interface CurrentSpaceProps {
-	dispatch: DashboardDispatch;
 	spaceId: bigint;
 }
 
-export default function Keys({ dispatch, spaceId }: CurrentSpaceProps) {
+export default function Keys({ spaceId }: CurrentSpaceProps) {
 	const { useKeysBySpaceId, useSpaceById, isReady } = useQueryHooks();
 	// fixme new key hack
 	const newKeyButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -43,6 +41,11 @@ export default function Keys({ dispatch, spaceId }: CurrentSpaceProps) {
 		},
 	});
 
+	const addresses = useMemo(
+		() => keysQuery.data?.keys.flatMap(({ addresses }) => addresses),
+		[keysQuery.data?.keys],
+	);
+
 	const { activeIntentId } = useIntents();
 	const space = spaceQuery.data?.space;
 	const isEmpty = !space || !keysQuery.data?.keys.length;
@@ -64,7 +67,7 @@ export default function Keys({ dispatch, spaceId }: CurrentSpaceProps) {
 					<NewKeyButton />
 				</div>
 			) : (
-				<DashboardGraph />
+				<DashboardGraph addresses={addresses} />
 			)}
 
 			<div className="bg-card py-6 px-8 border-[1px] border-border-secondary rounded-2xl">

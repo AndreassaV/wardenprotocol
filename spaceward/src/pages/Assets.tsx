@@ -1,4 +1,3 @@
-import { Assets } from "@/features/assets";
 import { useSpaceId } from "@/hooks/useSpaceId";
 import { useCurrency } from "@/hooks/useCurrency";
 import {
@@ -10,17 +9,17 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { NoSpaces } from "@/features/spaces";
-import { useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import clsx from "clsx";
-import SelectKeyModal from "@/features/assets/SelectKeyModal";
 import AssetTransactionModal from "@/features/assets/AssetTransactionModal.tsx";
-import SignTranactionModal from "@/features/assets/SignTransactionModal";
 import DepositFinalModal from "@/features/assets/DepositFinalModal";
 import { Icons } from "@/components/ui/icons-assets";
 import { useAssetQueries } from "@/features/assets/hooks";
 import { NewKeyButton } from "@/features/keys";
+import { ModalContext } from "@/context/modalContext";
 
 export function AssetsPage() {
+	const { dispatch: modalDispatch } = useContext(ModalContext);
 	// const { state, error, keyRequest, reset } = useRequestKey();
 	const { spaceId } = useSpaceId();
 	const { queryKeys } = useAssetQueries(spaceId);
@@ -45,6 +44,11 @@ export function AssetsPage() {
 	});
 
 	const noKeys = !queryKeys.data?.keys.length;
+
+	const addresses = useMemo(
+		() => queryKeys.data?.keys.flatMap((key) => key.addresses),
+		[queryKeys.data?.keys],
+	);
 
 	if (noKeys) {
 		return (
@@ -186,7 +190,16 @@ export function AssetsPage() {
 						<div className="text-muted-foreground">
 							Deposit assets to SpaceWard
 						</div>
-						<button className="text-black mt-6 bg-white h-[40px] rounded-lg justify-center text-base font-medium py-1 px-5 duration-300 ease-out hover:bg-pixel-pink">
+						<button
+							className="text-black mt-6 bg-white h-[40px] rounded-lg justify-center text-base font-medium py-1 px-5 duration-300 ease-out hover:bg-pixel-pink"
+							onClick={modalDispatch.bind(null, {
+								type: "set",
+								payload: {
+									type: "select-key",
+									params: { next: "receive", addresses },
+								},
+							})}
+						>
 							Receive
 						</button>
 					</div>
@@ -510,18 +523,6 @@ export function AssetsPage() {
 					<NoSpaces />
 				)}
 			</div> */}
-
-			{isSelectKeyModal && (
-				<SelectKeyModal
-					onHide={() => setIsSelectKeyModal(false)}
-					showTransactionModal={(type) =>
-						setIsShowTransactionModal({
-							isShown: true,
-							type: type,
-						})
-					}
-				/>
-			)}
 
 			{isShowTransactionModal.isShown && (
 				<AssetTransactionModal

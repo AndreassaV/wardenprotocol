@@ -1,25 +1,17 @@
-import { useReducer } from "react";
-import AssetTransactionModal from "@/features/assets/AssetTransactionModal.tsx";
-import SelectKeyModal from "@/features/assets/SelectKeyModal";
 import Keys from "@/features/dashboard/Keys";
 import { useSpaceId } from "@/hooks/useSpaceId";
 import { Actions } from "@/features/dashboard/Actions";
-import { commonReducer } from "@/utils/common";
-import { DashboardState } from "@/features/dashboard/types";
 import DappsDashboard from "@/features/dashboard/Dapps";
 import GovernanceDashboard from "@/features/dashboard/Governance";
 
 export function DashboardPage() {
-	const [state, dispatch] = useReducer(commonReducer<DashboardState>, {});
 	const { spaceId } = useSpaceId();
 
 	return (
 		<div className="px-8 py-4">
 			<h2 className="text-5xl mb-10 font-bold">Dashboard</h2>
 
-			{spaceId ? (
-				<Keys dispatch={dispatch} spaceId={BigInt(spaceId)} />
-			) : null}
+			{spaceId ? <Keys spaceId={BigInt(spaceId)} /> : null}
 
 			<div className="my-6 h-[1px] bg-background" />
 
@@ -31,19 +23,6 @@ export function DashboardPage() {
 
 				<DappsDashboard />
 			</div>
-
-			{state.modal === "select-key" ? (
-				<SelectKeyModal
-					onHide={() => {}}
-					showTransactionModal={(type) => {}}
-				/>
-			) : state.modal === "deposit" ? (
-				<AssetTransactionModal
-					onHide={() => {}}
-					onHideAll={() => {}}
-					type={state.modal}
-				/>
-			) : null}
 		</div>
 	);
 }
