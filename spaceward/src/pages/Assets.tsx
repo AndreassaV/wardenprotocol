@@ -17,19 +17,21 @@ import AssetTransactionModal from "@/features/assets/AssetTransactionModal.tsx";
 import SignTranactionModal from "@/features/assets/SignTransactionModal";
 import DepositFinalModal from "@/features/assets/DepositFinalModal";
 import { Icons } from "@/components/ui/icons-assets";
+import { useAssetQueries } from "@/features/assets/hooks";
+import { NewKeyButton } from "@/features/keys";
 
 export function AssetsPage() {
 	// const { state, error, keyRequest, reset } = useRequestKey();
+	const { spaceId } = useSpaceId();
+	const { queryKeys } = useAssetQueries(spaceId);
 
 	const [graphInterval, setGraphInterval] = useState<7 | 30 | 90>(30);
 
-	const { spaceId } = useSpaceId();
 	const { currency, setCurrency } = useCurrency();
 
 	const [isAllKeysVisible, setAllKeysVisible] = useState(false);
 	const [isAllNetworksVisible, setAllNetworksVisible] = useState(false);
 
-	const [noKeys, setNoKeys] = useState(false);
 	const [noAssets, setNoAssets] = useState(true);
 
 	const [isSelectKeyModal, setIsSelectKeyModal] = useState(false);
@@ -42,19 +44,24 @@ export function AssetsPage() {
 		type: "deposit",
 	});
 
+	const noKeys = !queryKeys.data?.keys.length;
+
 	if (noKeys) {
 		return (
 			<div className="h-[calc(100vh_-_106px)] min-h-[550px] flex flex-col justify-center items-center text-center">
 				<Icons.noAssetsKey className="mb-[72px]" />
+
 				<div className="text-5xl font-bold">No Keys found</div>
+
 				<div className="h-6" />
+
 				<div className="">
 					First add a key to start receiving assets
 				</div>
+
 				<div className="h-12" />
-				<button className="text-black bg-white h-[56px] rounded-lg justify-center text-base font-medium flex items-center gap-2 py-1 px-6">
-					Create Key
-				</button>
+
+				<NewKeyButton />
 			</div>
 		);
 	}
@@ -66,21 +73,8 @@ export function AssetsPage() {
 					<h2 className="text-5xl font-bold">Assets</h2>
 					<p className="text-muted-foreground"></p>
 				</div>
-				{/* <div>
-					<Select value={currency} onValueChange={setCurrency}>
-						<SelectTrigger className="w-[100px]">
-							<SelectValue placeholder="Currency" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectItem value="usd">USD</SelectItem>
-								<SelectItem value="eur">EUR</SelectItem>
-								<SelectItem value="gbp">GBP</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div> */}
 			</div>
+
 			<div className="grid grid-cols-[320px_1fr] gap-[24px]">
 				<div className="bg-card -bg relative overflow-hidden flex flex-col justify-between isolate py-6 px-8 rounded-xl">
 					<img

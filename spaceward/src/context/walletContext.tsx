@@ -35,17 +35,15 @@ export default function WalletProvider({ children }: Props) {
     const client = useClient();
     const connectedWallet = useWallet();
     const walletClient = useWalletClient();
-
     const [wallets, setWallets] = useState([] as Array<EncodedWallet>);
-
     const { chain } = useChain(env.cosmoskitChainName);
-
-    // const [activeWallet, setActiveWallet] = useState(null as Nullable<Wallet>);
     const { activeWallet, setActiveWallet } = useActiveWallet();
+	console.log(activeWallet.accounts)
 
     const [activeClient, setActiveClient] = useState(
         null as Nullable<ReturnType<typeof useClient>>
     );
+
     const { setSpaceId } = useSpaceId();
 
     const connectWallet = async () => {
@@ -110,9 +108,11 @@ export default function WalletProvider({ children }: Props) {
         setActiveClient(null);
         setActiveWallet(undefined);
     };
+
     const getActiveWallet = () => {
         return activeWallet;
     };
+
     return (
         <WalletContext.Provider value={{ wallets, activeWallet, activeClient }}>
             <WalletDispatchContext.Provider
