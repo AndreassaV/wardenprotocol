@@ -1,3 +1,8 @@
+import { KeyIcon } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "../../components/ui/button";
 import {
 	Sheet,
@@ -25,21 +30,19 @@ import {
 import { useSpaceId } from "@/hooks/useSpaceId";
 import useKeychainId from "@/hooks/useKeychainId";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { KeyRequestDialog } from "./KeyRequestDialog";
 import useRequestKey from "@/hooks/useRequestKey";
-import { KeyIcon } from "lucide-react";
 import { useQueryHooks } from "@/hooks/useClient";
 
 const FormSchema = z.object({});
 
-export function NewKeyButton() {
+export const NewKeyButton = React.forwardRef<HTMLButtonElement>(function NewKeyButtonWithRef(
+	{},
+	ref,
+) {
 	const [keychainId, setKeychainId] = useKeychainId();
 	const { spaceId } = useSpaceId();
-
 	const { state, error, keyRequest, requestKey, reset } = useRequestKey();
-
 	const { warden } = useQueryHooks();
 	const q = warden.warden.v1beta2.useKeychains({});
 
@@ -58,7 +61,7 @@ export function NewKeyButton() {
 
 			<Sheet>
 				<SheetTrigger asChild>
-					<Button className="mt-6 rounded bg-white py-[10px] px-5 font-semibold text-black ease-in duration-300 hover:bg-pixel-pink">
+					<Button ref={ref} className="mt-6 rounded bg-white py-[10px] px-5 font-semibold text-black ease-in duration-300 hover:bg-pixel-pink">
 						Create key
 					</Button>
 				</SheetTrigger>
@@ -118,7 +121,10 @@ export function NewKeyButton() {
 								disabled={!keychainId || !spaceId}
 								onClick={() => {
 									if (!keychainId || !spaceId) return;
-									requestKey(BigInt(keychainId), BigInt(spaceId))
+									requestKey(
+										BigInt(keychainId),
+										BigInt(spaceId),
+									);
 								}}
 								className="flex flex-row gap-4 w-full"
 							>
@@ -131,4 +137,4 @@ export function NewKeyButton() {
 			</Sheet>
 		</>
 	);
-}
+});

@@ -49,6 +49,7 @@ const createDefinition = (intent: SimpleIntent) => {
 	return result;
 };
 
+/** @deprecated refactor to useQueryHooks */
 export const useIntents = () => {
 	const { spaceId } = useSpaceId();
 	const { QuerySpaceById } = useWardenWardenV1Beta2();

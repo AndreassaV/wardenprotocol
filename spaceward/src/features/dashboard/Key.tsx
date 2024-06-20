@@ -10,6 +10,7 @@ import { createAvatar } from "@dicebear/core";
 
 const Key = ({ keyValue }: { keyValue: QueryKeyResponse }) => {
 	const [isSelectKeyModal, setIsSelectKeyModal] = useState(false);
+
 	const [isShowTransactionModal, setIsShowTransactionModal] = useState({
 		isShown: false,
 		type: "deposit",
