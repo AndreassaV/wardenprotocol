@@ -17,25 +17,20 @@ import { Icons } from "@/components/ui/icons-assets";
 import { useAssetQueries } from "@/features/assets/hooks";
 import { NewKeyButton } from "@/features/keys";
 import { ModalContext } from "@/context/modalContext";
+import { balancesQuery } from "@/features/assets/queries";
 
 export function AssetsPage() {
 	const { dispatch: modalDispatch } = useContext(ModalContext);
 	// const { state, error, keyRequest, reset } = useRequestKey();
 	const { spaceId } = useSpaceId();
-	const { queryKeys } = useAssetQueries(spaceId);
+	const { queryKeys, queryBalances } = useAssetQueries(spaceId);
 
 	const [graphInterval, setGraphInterval] = useState<7 | 30 | 90>(30);
-
 	const { currency, setCurrency } = useCurrency();
-
 	const [isAllKeysVisible, setAllKeysVisible] = useState(false);
 	const [isAllNetworksVisible, setAllNetworksVisible] = useState(false);
-
-	const [noAssets, setNoAssets] = useState(true);
-
 	const [isSelectKeyModal, setIsSelectKeyModal] = useState(false);
 	const [isDopositFinalModal, setIsDepositFinalModal] = useState(false);
-
 	const [isSignTransactionModal, setIsSignTransactionModal] = useState(false);
 
 	const [isShowTransactionModal, setIsShowTransactionModal] = useState({
@@ -43,12 +38,24 @@ export function AssetsPage() {
 		type: "deposit",
 	});
 
-	const noKeys = !queryKeys.data?.keys.length;
+	const totalBalance = useMemo(() => {
+		// fixme
+		const total = queryBalances.reduce((acc, item) => {
+			console.log(item.data);
+			return acc + (item.data?.balance ?? BigInt(0));
+		}, BigInt(0));
+
+		return total;
+	}, [queryBalances]);
+
+	const noAssets = !totalBalance;
 
 	const addresses = useMemo(
 		() => queryKeys.data?.keys.flatMap((key) => key.addresses),
 		[queryKeys.data?.keys],
 	);
+
+	const noKeys = !queryKeys.data?.keys.length;
 
 	if (noKeys) {
 		return (
@@ -326,6 +333,61 @@ export function AssetsPage() {
 						</div>
 
 						<div className="h-4" />
+
+						{queryBalances
+							.filter((item) => Boolean(item.data?.balance))
+							.map((item) => (
+								<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
+									<div className="flex items-center gap-3">
+										<div className="relative">
+											<img
+												src={
+													item.data?.type ===
+													"eip155:native"
+														? "/images/eth.png"
+														: ""
+												}
+												alt=""
+												className="w-10 h-10 object-contain"
+											/>
+											<img
+												src="/images/b-eth.png"
+												alt=""
+												className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
+											/>
+										</div>
+										<div>
+											<div>ETH</div>
+											<div className="text-xs text-muted-foreground">
+												{item.data?.chainName}
+											</div>
+										</div>
+									</div>
+
+									<div className="text-right flex flex-col justify-center">
+										<div>...xsd1</div>
+										<div className="text-xs text-muted-foreground">
+											Key #1,234
+										</div>
+									</div>
+
+									<div className="text-right flex flex-col justify-center">
+										<div>0.12</div>
+										<div className="text-xs text-muted-foreground">
+											$356,67
+										</div>
+									</div>
+
+									<div className="flex items-center justify-end gap-2">
+										<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
+											Receive
+										</button>
+										<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
+											Send
+										</button>
+									</div>
+								</div>
+							))}
 
 						<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
 							<div className="flex items-center gap-3">
