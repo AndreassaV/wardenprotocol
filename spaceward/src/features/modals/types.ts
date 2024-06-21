@@ -10,4 +10,6 @@ export interface SelectKeyParams {
 export interface TransferParams {
 	address?: string;
 	type?: AddressType;
+	token?: string;
+	chainName?: string;
 }

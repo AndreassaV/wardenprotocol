@@ -17,7 +17,13 @@ import { Icons } from "@/components/ui/icons-assets";
 import { useAssetQueries } from "@/features/assets/hooks";
 import { NewKeyButton } from "@/features/keys";
 import { ModalContext } from "@/context/modalContext";
-import { balancesQuery } from "@/features/assets/queries";
+import { AddressType } from "@wardenprotocol/wardenjs/codegen/warden/warden/v1beta2/key";
+import { bigintToFixed } from "@/lib/math";
+
+function capitalize<T extends string>(str: T): Capitalize<T> {
+	return (str.charAt(0).toUpperCase() +
+		str.slice(1).toLowerCase()) as Capitalize<T>;
+}
 
 export function AssetsPage() {
 	const { dispatch: modalDispatch } = useContext(ModalContext);
@@ -29,20 +35,23 @@ export function AssetsPage() {
 	const { currency, setCurrency } = useCurrency();
 	const [isAllKeysVisible, setAllKeysVisible] = useState(false);
 	const [isAllNetworksVisible, setAllNetworksVisible] = useState(false);
-	const [isSelectKeyModal, setIsSelectKeyModal] = useState(false);
 	const [isDopositFinalModal, setIsDepositFinalModal] = useState(false);
-	const [isSignTransactionModal, setIsSignTransactionModal] = useState(false);
-
-	const [isShowTransactionModal, setIsShowTransactionModal] = useState({
-		isShown: false,
-		type: "deposit",
-	});
 
 	const totalBalance = useMemo(() => {
-		// fixme
+		const targetDecimals = 2;
+
 		const total = queryBalances.reduce((acc, item) => {
-			console.log(item.data);
-			return acc + (item.data?.balance ?? BigInt(0));
+			if (!item.data) {
+				return acc;
+			}
+
+			const decimals = item.data.decimals + item.data.priceDecimals;
+
+			const usd =
+				(item.data.balance * item.data.price) /
+				BigInt(10) ** BigInt(decimals - targetDecimals);
+
+			return acc + usd;
 		}, BigInt(0));
 
 		return total;
@@ -94,7 +103,13 @@ export function AssetsPage() {
 						className="absolute right-0 top-0 h-full w-auto z-[-5]"
 					/>
 					<div className="flex items-baseline gap-[6px]">
-						<div className="text-2xl font-bold">$4,085.76</div>
+						<div className="text-2xl font-bold">
+							$
+							{bigintToFixed(totalBalance, {
+								decimals: 2,
+								format: true,
+							})}
+						</div>
 
 						{noAssets ? (
 							<></>
@@ -125,14 +140,26 @@ export function AssetsPage() {
 					) : (
 						<div className="grid grid-cols-2 gap-2">
 							<button
-								onClick={() => setIsSelectKeyModal(true)}
 								className="w-full text-black bg-white flex items-center h-10 rounded gap-2 justify-center text-base font-medium"
+								onClick={modalDispatch.bind(null, {
+									type: "set",
+									payload: {
+										type: "select-key",
+										params: { next: "receive", addresses },
+									},
+								})}
 							>
 								<Icons.arrowDown />
 								Receive
 							</button>
 							<button
-								onClick={() => setIsSelectKeyModal(true)}
+								onClick={modalDispatch.bind(null, {
+									type: "set",
+									payload: {
+										type: "select-key",
+										params: { next: "send", addresses },
+									},
+								})}
 								className="w-full text-muted-foreground flex items-center h-10 rounded gap-2 justify-center text-base font-medium"
 							>
 								<Icons.send />
@@ -336,242 +363,123 @@ export function AssetsPage() {
 
 						{queryBalances
 							.filter((item) => Boolean(item.data?.balance))
-							.map((item) => (
-								<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
-									<div className="flex items-center gap-3">
-										<div className="relative">
-											<img
-												src={
-													item.data?.type ===
-													"eip155:native"
-														? "/images/eth.png"
-														: ""
-												}
-												alt=""
-												className="w-10 h-10 object-contain"
-											/>
-											<img
-												src="/images/b-eth.png"
-												alt=""
-												className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
-											/>
-										</div>
-										<div>
-											<div>ETH</div>
-											<div className="text-xs text-muted-foreground">
-												{item.data?.chainName}
+							.map((item) =>
+								item.data ? (
+									<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
+										<div className="flex items-center gap-3">
+											<div className="relative">
+												<img
+													src={
+														item.data.type ===
+														"eip155:native"
+															? "/images/eth.png"
+															: ""
+													}
+													alt=""
+													className="w-10 h-10 object-contain"
+												/>
+												<img
+													src="/images/b-eth.png"
+													alt=""
+													className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
+												/>
+											</div>
+											<div>
+												<div>{item.data.token}</div>
+												<div className="text-xs text-muted-foreground">
+													{item.data.title} (
+													{capitalize(
+														item.data.chainName,
+													)}
+													)
+												</div>
 											</div>
 										</div>
-									</div>
 
-									<div className="text-right flex flex-col justify-center">
-										<div>...xsd1</div>
-										<div className="text-xs text-muted-foreground">
-											Key #1,234
+										<div className="text-right flex flex-col justify-center">
+											<div>
+												...
+												{item.data?.address.slice(-8)}
+											</div>
+											<div className="text-xs text-muted-foreground">
+												Key #1,234
+											</div>
+										</div>
+
+										<div className="text-right flex flex-col justify-center">
+											<div>
+												{bigintToFixed(
+													item.data.balance,
+													{
+														decimals:
+															item.data.decimals,
+
+														// fixme:  display: 2,
+													},
+												)}
+											</div>
+											<div className="text-xs text-muted-foreground">
+												$
+												{bigintToFixed(
+													item.data.balance *
+														item.data.price,
+													{
+														decimals:
+															item.data.decimals +
+															item.data
+																.priceDecimals,
+														display: 2,
+														format: true,
+													},
+												)}
+											</div>
+										</div>
+
+										<div className="flex items-center justify-end gap-2">
+											<button
+												className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4"
+												onClick={modalDispatch.bind(
+													null,
+													{
+														type: "set",
+														payload: {
+															type: "receive",
+															params: {
+																address:
+																	item.data
+																		?.address,
+																type: AddressType.ADDRESS_TYPE_ETHEREUM,
+															},
+														},
+													},
+												)}
+											>
+												Receive
+											</button>
+											<button
+												className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4"
+												onClick={modalDispatch.bind(
+													null,
+													{
+														type: "set",
+														payload: {
+															type: "send",
+															params: {
+																address:
+																	item.data
+																		?.address,
+																type: AddressType.ADDRESS_TYPE_ETHEREUM,
+															},
+														},
+													},
+												)}
+											>
+												Send
+											</button>
 										</div>
 									</div>
-
-									<div className="text-right flex flex-col justify-center">
-										<div>0.12</div>
-										<div className="text-xs text-muted-foreground">
-											$356,67
-										</div>
-									</div>
-
-									<div className="flex items-center justify-end gap-2">
-										<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-											Receive
-										</button>
-										<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-											Send
-										</button>
-									</div>
-								</div>
-							))}
-
-						<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
-							<div className="flex items-center gap-3">
-								<div className="relative">
-									<img
-										src="/images/eth.png"
-										alt=""
-										className="w-10 h-10 object-contain"
-									/>
-									<img
-										src="/images/b-eth.png"
-										alt=""
-										className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
-									/>
-								</div>
-								<div>
-									<div>ETH</div>
-									<div className="text-xs text-muted-foreground">
-										Ethereum
-									</div>
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>...xsd1</div>
-								<div className="text-xs text-muted-foreground">
-									Key #1,234
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>0.12</div>
-								<div className="text-xs text-muted-foreground">
-									$356,67
-								</div>
-							</div>
-
-							<div className="flex items-center justify-end gap-2">
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Receive
-								</button>
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Send
-								</button>
-							</div>
-						</div>
-
-						<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]  border-t-[1px] border-secondary-bg">
-							<div className="flex items-center gap-3">
-								<div className="relative">
-									<img
-										src="/images/arb-icon.png"
-										alt=""
-										className="w-10 h-10 object-contain"
-									/>
-									<img
-										src="/images/b-arb.png"
-										alt=""
-										className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
-									/>
-								</div>
-								<div>
-									<div>USDC</div>
-									<div className="text-xs text-muted-foreground">
-										USD Coin
-									</div>
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>...xsd1</div>
-								<div className="text-xs text-muted-foreground">
-									Key #1,234
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>0.12</div>
-								<div className="text-xs text-muted-foreground">
-									$356,67
-								</div>
-							</div>
-
-							<div className="flex items-center justify-end gap-2">
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Receive
-								</button>
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Send
-								</button>
-							</div>
-						</div>
-
-						<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px] border-t-[1px] border-secondary-bg">
-							<div className="flex items-center gap-3">
-								<div className="relative">
-									<img
-										src="/images/matic.png"
-										alt=""
-										className="w-10 h-10 object-contain"
-									/>
-									<img
-										src="/images/b-eth.png"
-										alt=""
-										className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
-									/>
-								</div>
-								<div>
-									<div>MATIC</div>
-									<div className="text-xs text-muted-foreground">
-										Polygon
-									</div>
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>...xsd1</div>
-								<div className="text-xs text-muted-foreground">
-									Key #1,234
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>0.12</div>
-								<div className="text-xs text-muted-foreground">
-									$356,67
-								</div>
-							</div>
-
-							<div className="flex items-center justify-end gap-2">
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Receive
-								</button>
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Send
-								</button>
-							</div>
-						</div>
-
-						<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px] border-t-[1px] border-secondary-bg">
-							<div className="flex items-center gap-3">
-								<div className="relative">
-									<img
-										src="/images/uni.png"
-										alt=""
-										className="w-10 h-10 object-contain"
-									/>
-									<img
-										src="/images/b-eth.png"
-										alt=""
-										className="w-[18px] h-[18px] object-contain absolute right-[-4px] bottom-[-4px]"
-									/>
-								</div>
-								<div>
-									<div>UNI</div>
-									<div className="text-xs text-muted-foreground">
-										Uniswap
-									</div>
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>...xsd1</div>
-								<div className="text-xs text-muted-foreground">
-									Key #1,234
-								</div>
-							</div>
-
-							<div className="text-right flex flex-col justify-center">
-								<div>0.12</div>
-								<div className="text-xs text-muted-foreground">
-									$356,67
-								</div>
-							</div>
-
-							<div className="flex items-center justify-end gap-2">
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Receive
-								</button>
-								<button className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4">
-									Send
-								</button>
-							</div>
-						</div>
+								) : null,
+							)}
 					</div>
 				)}
 			</div>
@@ -585,31 +493,6 @@ export function AssetsPage() {
 					<NoSpaces />
 				)}
 			</div> */}
-
-			{isShowTransactionModal.isShown && (
-				<AssetTransactionModal
-					onHide={() =>
-						setIsShowTransactionModal({
-							isShown: false,
-							type: "send",
-						})
-					}
-					onHideAll={() => {
-						setIsShowTransactionModal({
-							isShown: false,
-							type: "send",
-						});
-						setIsSelectKeyModal(false);
-					}}
-					type={isShowTransactionModal.type}
-				/>
-			)}
-
-			{/* {isSignTransactionModal && (
-				<SignTranactionModal
-					onHide={() => setIsSignTransactionModal(false)}
-				/>
-			)} */}
 
 			{isDopositFinalModal && (
 				<DepositFinalModal

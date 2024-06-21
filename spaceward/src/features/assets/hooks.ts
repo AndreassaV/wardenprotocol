@@ -19,7 +19,9 @@ export const useAssetQueries = (spaceId?: string | null) => {
 		},
 	});
 
-	const queryBalances = useQueries(balancesQuery(queryKeys.data?.keys));
+	const queryBalances = useQueries(
+		balancesQuery(isReady, queryKeys.data?.keys),
+	);
 
 	return { queryKeys, queryBalances };
 };

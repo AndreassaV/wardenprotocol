@@ -2,8 +2,8 @@ import { ModalContext, type ModalState } from "@/context/modalContext";
 import { useContext } from "react";
 import SelectKeyModal from "./SelectKeys";
 import { SelectKeyParams, TransferParams } from "./types";
-import { ReceiveAssetButton } from "../assets";
 import ReceiveAssetsModal from "./ReceiveAssets";
+import SendAssetsModal from "./SendAssets";
 
 export default function ModalRoot(props: ModalState) {
 	const { dispatch } = useContext(ModalContext);
@@ -27,6 +27,8 @@ export default function ModalRoot(props: ModalState) {
 				<SelectKeyModal {...(props.params as SelectKeyParams)} />
 			) : props.type === "receive" ? (
 				<ReceiveAssetsModal {...(props.params as TransferParams)} />
+			) : props.type === "send" ? (
+				<SendAssetsModal {...(props.params as TransferParams)} />
 			) : (
 				<>not implemented</>
 			)}
