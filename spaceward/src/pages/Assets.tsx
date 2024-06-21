@@ -9,7 +9,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { NoSpaces } from "@/features/spaces";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useReducer, useState } from "react";
 import clsx from "clsx";
 import AssetTransactionModal from "@/features/assets/AssetTransactionModal.tsx";
 import DepositFinalModal from "@/features/assets/DepositFinalModal";
@@ -18,21 +18,67 @@ import { useAssetQueries } from "@/features/assets/hooks";
 import { NewKeyButton } from "@/features/keys";
 import { ModalContext } from "@/context/modalContext";
 import { AddressType } from "@wardenprotocol/wardenjs/codegen/warden/warden/v1beta2/key";
-import { bigintToFixed } from "@/lib/math";
+import { bigintToFixed, bigintToFloat } from "@/lib/math";
+import { commonReducer } from "@/utils/common";
 
 function capitalize<T extends string>(str: T): Capitalize<T> {
 	return (str.charAt(0).toUpperCase() +
 		str.slice(1).toLowerCase()) as Capitalize<T>;
 }
 
+const USDollar = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+});
+
+const Euro = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "EUR",
+});
+
+const GBP = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "GBP",
+});
+
+const FIAT_FORMAT = {
+	usd: USDollar,
+	eur: Euro,
+	gbp: GBP,
+} as const;
+
+type Currency = keyof typeof FIAT_FORMAT;
+
 export function AssetsPage() {
+	const curr = useCurrency();
+	const currency = curr.currency as Currency;
+	const setCurrency = curr.setCurrency as (currency: Currency) => void;
+	const formatter = FIAT_FORMAT[currency];
 	const { dispatch: modalDispatch } = useContext(ModalContext);
 	// const { state, error, keyRequest, reset } = useRequestKey();
 	const { spaceId } = useSpaceId();
-	const { queryKeys, queryBalances } = useAssetQueries(spaceId);
+	const { queryKeys, queryBalances, queryPrices } = useAssetQueries(spaceId);
+	const fiatConversion = useMemo(() => {
+		if (currency === "usd") {
+			return {
+				name: "usd",
+				value: BigInt(1),
+				decimals: 0,
+			};
+		}
+
+		for (const entry of queryPrices) {
+			if (!entry.data) {
+				continue;
+			}
+
+			if (entry.data.name === currency) {
+				return entry.data;
+			}
+		}
+	}, [queryPrices, currency]);
 
 	const [graphInterval, setGraphInterval] = useState<7 | 30 | 90>(30);
-	const { currency, setCurrency } = useCurrency();
 	const [isAllKeysVisible, setAllKeysVisible] = useState(false);
 	const [isAllNetworksVisible, setAllNetworksVisible] = useState(false);
 	const [isDopositFinalModal, setIsDepositFinalModal] = useState(false);
@@ -104,11 +150,19 @@ export function AssetsPage() {
 					/>
 					<div className="flex items-baseline gap-[6px]">
 						<div className="text-2xl font-bold">
-							$
-							{bigintToFixed(totalBalance, {
-								decimals: 2,
-								format: true,
-							})}
+							{formatter.format(
+								bigintToFloat(
+									fiatConversion
+										? (totalBalance *
+												BigInt(10) **
+													BigInt(
+														fiatConversion.decimals,
+													)) /
+												fiatConversion.value
+										: BigInt(0),
+									2,
+								),
+							)}
 						</div>
 
 						{noAssets ? (
@@ -365,7 +419,10 @@ export function AssetsPage() {
 							.filter((item) => Boolean(item.data?.balance))
 							.map((item) =>
 								item.data ? (
-									<div className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]">
+									<div
+										className="grid grid-cols-[1fr_100px_100px_280px] h-[72px]"
+										key={`${item.data.title}:${item.data.chainName}`}
+									>
 										<div className="flex items-center gap-3">
 											<div className="relative">
 												<img
@@ -419,18 +476,25 @@ export function AssetsPage() {
 												)}
 											</div>
 											<div className="text-xs text-muted-foreground">
-												$
-												{bigintToFixed(
-													item.data.balance *
-														item.data.price,
-													{
-														decimals:
-															item.data.decimals +
+												{formatter.format(
+													bigintToFloat(
+														fiatConversion
+															? (item.data
+																	.balance *
+																	item.data
+																		.price *
+																	BigInt(
+																		10,
+																	) **
+																		BigInt(
+																			fiatConversion.decimals,
+																		)) /
+																	fiatConversion.value
+															: BigInt(0),
+														item.data.decimals +
 															item.data
 																.priceDecimals,
-														display: 2,
-														format: true,
-													},
+													),
 												)}
 											</div>
 										</div>

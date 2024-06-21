@@ -5,6 +5,7 @@ import { QueryKeyResponse } from "@wardenprotocol/wardenjs/codegen/warden/warden
 import { BalanceEntry } from "./types";
 import erc20Abi from "@/contracts/eip155/erc20Abi";
 import aggregatorV3InterfaceABI from "@/contracts/eip155/priceFeedAbi";
+import { queries } from "@testing-library/react";
 
 type ChainName = Parameters<typeof getProvider>[0];
 
@@ -195,4 +196,50 @@ export const balancesQuery = (enabled: boolean, keys?: QueryKeyResponse[]) => {
 	];
 
 	return { queries };
+};
+
+const EURO_PRICE_FEED = "0xb49f677943BC038e9857d61E7d053CaA2C1734C1";
+const GBP_PRICE_FEED = "0x5c0Ab2d9b5a7ed9f470386e82BB36A3613cDd4b5";
+
+const FIAT_PRICE_FEEDS: Record<string, `0x${string}`> = {
+	eur: EURO_PRICE_FEED,
+	gbp: GBP_PRICE_FEED,
+};
+
+const fiatPriceQuery = (enabled: boolean, name: string) => {
+	if (!(name in FIAT_PRICE_FEEDS)) {
+		throw new Error("Invalid fiat currency");
+	}
+
+	const provider = getProvider("mainnet");
+
+	const priceFeedContract = new ethers.Contract(
+		FIAT_PRICE_FEEDS[name],
+		aggregatorV3InterfaceABI,
+		provider,
+	);
+
+	return {
+		enabled,
+		queryKey: ["fiatPrice", name],
+		queryFn: async () => {
+			const price: bigint =
+				(await priceFeedContract.latestRoundData())?.answer ??
+				BigInt(0);
+
+			return {
+				name,
+				value: price,
+				decimals: 8,
+			};
+		},
+	} as const;
+};
+
+export const fiatPricesQuery = (enabled: boolean) => {
+	return {
+		queries: Object.keys(FIAT_PRICE_FEEDS).map((name) => {
+			return fiatPriceQuery(enabled, name);
+		}),
+	};
 };
