@@ -512,7 +512,16 @@ export function AssetsPage() {
 																address:
 																	item.data
 																		?.address,
-																type: AddressType.ADDRESS_TYPE_ETHEREUM,
+																chainName:
+																	item.data
+																		.chainName,
+																token: item.data
+																	.token,
+																type: item.data.type.startsWith(
+																	"eip155:",
+																)
+																	? AddressType.ADDRESS_TYPE_ETHEREUM
+																	: AddressType.ADDRESS_TYPE_OSMOSIS,
 															},
 														},
 													},
@@ -532,7 +541,16 @@ export function AssetsPage() {
 																address:
 																	item.data
 																		?.address,
-																type: AddressType.ADDRESS_TYPE_ETHEREUM,
+																chainName:
+																	item.data
+																		.chainName,
+																token: item.data
+																	.token,
+																type: item.data.type.startsWith(
+																	"eip155:",
+																)
+																	? AddressType.ADDRESS_TYPE_ETHEREUM
+																	: AddressType.ADDRESS_TYPE_OSMOSIS,
 															},
 														},
 													},

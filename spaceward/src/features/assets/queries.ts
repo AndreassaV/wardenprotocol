@@ -158,8 +158,13 @@ const eip155ERC20BalanceQuery = ({
 const is0x = (address: string): address is `0x${string}` =>
 	address.startsWith("0x");
 
-export const balancesQuery = (enabled: boolean, keys?: QueryKeyResponse[]) => {
+export const balancesQuery = (
+	enabled: boolean,
+	/** @deprecated fixme params, we need only address */
+	keys?: Pick<QueryKeyResponse, "addresses">[],
+) => {
 	const eth: `0x${string}`[] = [];
+	// TODO add osmosis
 
 	for (const key of keys ?? []) {
 		for (const address of key.addresses) {
