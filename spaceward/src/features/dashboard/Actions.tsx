@@ -6,13 +6,13 @@ import { useAddressContext } from "@/hooks/useAddressContext";
 import { prettyActionStatus } from "@/utils/formatting";
 import { Icons } from "@/components/ui/icons-assets";
 import { useQueryHooks } from "@/hooks/useClient";
-import { ActionStatus } from "@wardenprotocol/wardenjs/codegen/warden/intent/action";
+import { ActionStatus } from "@wardenprotocol/wardenjs/codegen/warden/act/v1beta1/action";
 
 export function Actions() {
 	const { address } = useAddressContext();
-	const { isReady, useActionsByAddress } = useQueryHooks();
+	const { isReady, warden } = useQueryHooks();
 
-	const q = useActionsByAddress({
+	const q = warden.act.v1beta1.useActionsByAddress({
 		request: {
 			address,
 			status: ActionStatus.ACTION_STATUS_UNSPECIFIED,

@@ -4,7 +4,7 @@ import { useAddressContext } from "@/hooks/useAddressContext";
 import {
 	ActionStatus,
 	Action as ActionModel,
-} from "@wardenprotocol/wardenjs/codegen/warden/intent/action";
+} from "@wardenprotocol/wardenjs/codegen/warden/act/v1beta1/action";
 import { useClient } from "@/hooks/useClient";
 import { useToast } from "@/components/ui/use-toast";
 import { monitorTx } from "@/hooks/keplr";

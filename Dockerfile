@@ -87,9 +87,10 @@ RUN npm run build
 ## wardenjs
 FROM node-build-env as wardenjs-builder
 WORKDIR /wardenjs
-COPY wardenjs/package*.json wardenjs/pnpm-lock.yaml ./
+COPY wardenjs/package*.json wardenjs/pnpm-lock.yaml wardenjs/scripts ./
 RUN pnpm install --frozen-lockfile
 COPY wardenjs/ .
+RUN pnpm codegen
 RUN pnpm run build
 
 ## spaceward
