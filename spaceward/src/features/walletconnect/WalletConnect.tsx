@@ -40,7 +40,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { PowerIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { AddressType } from "@wardenprotocol/wardenjs/codegen/warden/warden/v1beta2/key";
+import { AddressType } from "@wardenprotocol/wardenjs/codegen/warden/warden/v1beta3/key";
 import { Html5Qrcode } from "html5-qrcode";
 import { base64FromBytes } from "@wardenprotocol/wardenjs/codegen/helpers";
 import { useSpaceId } from "@/hooks/useSpaceId";
@@ -255,7 +255,7 @@ const supportedNamespaces = {
 
 async function fetchAddresses(spaceId: string, type: AddressType) {
 	const client = await getClient();
-	const queryKeys = client.warden.warden.v1beta2.keysBySpaceId;
+	const queryKeys = client.warden.warden.v1beta3.keysBySpaceId;
 	const res = await queryKeys({
 		spaceId: BigInt(spaceId),
 		deriveAddresses: [type],
@@ -269,7 +269,7 @@ async function fetchAddresses(spaceId: string, type: AddressType) {
 
 async function findKeyByAddress(spaceId: string, address: string) {
 	const client = await getClient();
-	const queryKeys = client.warden.warden.v1beta2.keysBySpaceId;
+	const queryKeys = client.warden.warden.v1beta3.keysBySpaceId;
 	const res = await queryKeys({
 		spaceId: BigInt(spaceId),
 		deriveAddresses: [
