@@ -24750,12 +24750,12 @@ paths:
             description: MsgUpdateParams is the Msg/UpdateParams request type.
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/AddKeychainParty:
+  /warden.warden.v1beta3.Msg/AddKeychainParty:
     post:
       summary: |-
         Add a new party to a keychain. Transactions coming from this party will
         be considered trusted by the keychain.
-      operationId: WardenWardenV1Beta2Msg_AddKeychainParty
+      operationId: WardenWardenv1beta3Msg_AddKeychainParty
       responses:
         '200':
           description: A successful response.
@@ -24968,10 +24968,10 @@ paths:
                 type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/AddSpaceOwner:
+  /warden.warden.v1beta3.Msg/AddSpaceOwner:
     post:
       summary: Add a new owner to a space.
-      operationId: WardenWardenV1Beta2Msg_AddSpaceOwner
+      operationId: WardenWardenv1beta3Msg_AddSpaceOwner
       responses:
         '200':
           description: A successful response.
@@ -25184,10 +25184,10 @@ paths:
                 type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/FulfilSignRequest:
+  /warden.warden.v1beta3.Msg/FulfilSignRequest:
     post:
       summary: Fulfill a signature request
-      operationId: WardenWardenV1Beta2Msg_FulfilSignRequest
+      operationId: WardenWardenv1beta3Msg_FulfilSignRequest
       responses:
         '200':
           description: A successful response.
@@ -25428,12 +25428,12 @@ paths:
                 type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/NewKeyRequest:
+  /warden.warden.v1beta3.Msg/NewKeyRequest:
     post:
       summary: |-
         Request a new key to a keychain, the key will belong to the specified
         space.
-      operationId: WardenWardenV1Beta2Msg_NewKeyRequest
+      operationId: WardenWardenv1beta3Msg_NewKeyRequest
       responses:
         '200':
           description: A successful response.
@@ -25670,10 +25670,10 @@ paths:
                 format: uint64
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/NewKeychain:
+  /warden.warden.v1beta3.Msg/NewKeychain:
     post:
       summary: Create a new keychain. The user will be the first admin of the keychain.
-      operationId: WardenWardenV1Beta2Msg_NewKeychain
+      operationId: WardenWardenv1beta3Msg_NewKeychain
       responses:
         '200':
           description: A successful response.
@@ -25899,10 +25899,10 @@ paths:
                     format: int64
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/NewSignRequest:
+  /warden.warden.v1beta3.Msg/NewSignRequest:
     post:
       summary: Request a new signature
-      operationId: WardenWardenV1Beta2Msg_NewSignRequest
+      operationId: WardenWardenv1beta3Msg_NewSignRequest
       responses:
         '200':
           description: A successful response.
@@ -26317,10 +26317,10 @@ paths:
                   type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/NewSpace:
+  /warden.warden.v1beta3.Msg/NewSpace:
     post:
       summary: Create a new Space. The creator will be the first owner of the Space.
-      operationId: WardenWardenV1Beta2Msg_NewSpace
+      operationId: WardenWardenv1beta3Msg_NewSpace
       responses:
         '200':
           description: A successful response.
@@ -26542,12 +26542,12 @@ paths:
                   type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/RemoveSpaceOwner:
+  /warden.warden.v1beta3.Msg/RemoveSpaceOwner:
     post:
       summary: |-
         Remove an owner from the space. The user can remove itself, but at
         least one owner must be left.
-      operationId: WardenWardenV1Beta2Msg_RemoveSpaceOwner
+      operationId: WardenWardenv1beta3Msg_RemoveSpaceOwner
       responses:
         '200':
           description: A successful response.
@@ -26760,10 +26760,10 @@ paths:
                 type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/UpdateKey:
+  /warden.warden.v1beta3.Msg/UpdateKey:
     post:
       summary: Update informations of a Key.
-      operationId: WardenWardenV1Beta2Msg_UpdateKey
+      operationId: WardenWardenv1beta3Msg_UpdateKey
       responses:
         '200':
           description: A successful response.
@@ -26977,12 +26977,12 @@ paths:
                 format: uint64
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/UpdateKeyRequest:
+  /warden.warden.v1beta3.Msg/UpdateKeyRequest:
     post:
       summary: |-
         Update an existing request by writing a result into it. This method is
         called by a keychain party.
-      operationId: WardenWardenV1Beta2Msg_UpdateKeyRequest
+      operationId: WardenWardenv1beta3Msg_UpdateKeyRequest
       responses:
         '200':
           description: A successful response.
@@ -27223,10 +27223,10 @@ paths:
                 type: string
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/UpdateKeychain:
+  /warden.warden.v1beta3.Msg/UpdateKeychain:
     post:
       summary: Update a keychain, e.g. update the status or description.
-      operationId: WardenWardenV1Beta2Msg_UpdateKeychain
+      operationId: WardenWardenv1beta3Msg_UpdateKeychain
       responses:
         '200':
           description: A successful response.
@@ -27450,12 +27450,12 @@ paths:
                     format: int64
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/UpdateParams:
+  /warden.warden.v1beta3.Msg/UpdateParams:
     post:
       summary: |-
         UpdateParams defines a (governance) operation for updating the module
         parameters. The authority defaults to the x/gov module account.
-      operationId: WardenWardenV1Beta2Msg_UpdateParams
+      operationId: WardenWardenv1beta3Msg_UpdateParams
       responses:
         '200':
           description: A successful response.
@@ -27679,10 +27679,10 @@ paths:
             description: MsgUpdateParams is the Msg/UpdateParams request type.
       tags:
         - Msg
-  /warden.warden.v1beta2.Msg/UpdateSpace:
+  /warden.warden.v1beta3.Msg/UpdateSpace:
     post:
       summary: Update a space, e.g. changing the intents in use.
-      operationId: WardenWardenV1Beta2Msg_UpdateSpace
+      operationId: WardenWardenv1beta3Msg_UpdateSpace
       responses:
         '200':
           description: A successful response.
@@ -36165,7 +36165,7 @@ definitions:
   warden.intent.Params:
     type: object
     description: Params defines the parameters for the module.
-  warden.warden.v1beta2.KeyRequestStatus:
+  warden.warden.v1beta3.KeyRequestStatus:
     type: string
     enum:
       - KEY_REQUEST_STATUS_UNSPECIFIED
@@ -36187,7 +36187,7 @@ definitions:
       request.
        - KEY_REQUEST_STATUS_FULFILLED: The request was fulfilled. This is a final state for a request.
        - KEY_REQUEST_STATUS_REJECTED: The request was rejected. This is a final state for a request.
-  warden.warden.v1beta2.KeyType:
+  warden.warden.v1beta3.KeyType:
     type: string
     enum:
       - KEY_TYPE_UNSPECIFIED
@@ -36201,7 +36201,7 @@ definitions:
        - KEY_TYPE_UNSPECIFIED: The key type is missing.
        - KEY_TYPE_ECDSA_SECP256K1: The key is an ECDSA secp256k1 key.
        - KEY_TYPE_EDDSA_ED25519: The key is an EdDSA Ed25519 key.
-  warden.warden.v1beta2.KeychainFees:
+  warden.warden.v1beta3.KeychainFees:
     type: object
     properties:
       key_req:
@@ -36210,7 +36210,7 @@ definitions:
       sig_req:
         type: string
         format: int64
-  warden.warden.v1beta2.MsgAddKeychainParty:
+  warden.warden.v1beta3.MsgAddKeychainParty:
     type: object
     properties:
       creator:
@@ -36220,9 +36220,9 @@ definitions:
         format: uint64
       party:
         type: string
-  warden.warden.v1beta2.MsgAddKeychainPartyResponse:
+  warden.warden.v1beta3.MsgAddKeychainPartyResponse:
     type: object
-  warden.warden.v1beta2.MsgAddSpaceOwner:
+  warden.warden.v1beta3.MsgAddSpaceOwner:
     type: object
     properties:
       authority:
@@ -36232,9 +36232,9 @@ definitions:
         format: uint64
       new_owner:
         type: string
-  warden.warden.v1beta2.MsgAddSpaceOwnerResponse:
+  warden.warden.v1beta3.MsgAddSpaceOwnerResponse:
     type: object
-  warden.warden.v1beta2.MsgFulfilSignRequest:
+  warden.warden.v1beta3.MsgFulfilSignRequest:
     type: object
     properties:
       creator:
@@ -36272,15 +36272,15 @@ definitions:
             format: byte
       reject_reason:
         type: string
-  warden.warden.v1beta2.MsgFulfilSignRequestResponse:
+  warden.warden.v1beta3.MsgFulfilSignRequestResponse:
     type: object
-  warden.warden.v1beta2.MsgNewKey:
+  warden.warden.v1beta3.MsgNewKey:
     type: object
     properties:
       public_key:
         type: string
         format: byte
-  warden.warden.v1beta2.MsgNewKeyRequest:
+  warden.warden.v1beta3.MsgNewKeyRequest:
     type: object
     properties:
       authority:
@@ -36308,13 +36308,13 @@ definitions:
       intent_id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgNewKeyRequestResponse:
+  warden.warden.v1beta3.MsgNewKeyRequestResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgNewKeychain:
+  warden.warden.v1beta3.MsgNewKeychain:
     type: object
     properties:
       creator:
@@ -36333,13 +36333,13 @@ definitions:
           sig_req:
             type: string
             format: int64
-  warden.warden.v1beta2.MsgNewKeychainResponse:
+  warden.warden.v1beta3.MsgNewKeychainResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgNewSignRequest:
+  warden.warden.v1beta3.MsgNewSignRequest:
     type: object
     properties:
       authority:
@@ -36535,13 +36535,13 @@ definitions:
         type: array
         items:
           type: string
-  warden.warden.v1beta2.MsgNewSignRequestResponse:
+  warden.warden.v1beta3.MsgNewSignRequestResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgNewSpace:
+  warden.warden.v1beta3.MsgNewSpace:
     type: object
     properties:
       creator:
@@ -36556,13 +36556,13 @@ definitions:
         type: array
         items:
           type: string
-  warden.warden.v1beta2.MsgNewSpaceResponse:
+  warden.warden.v1beta3.MsgNewSpaceResponse:
     type: object
     properties:
       id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgRemoveSpaceOwner:
+  warden.warden.v1beta3.MsgRemoveSpaceOwner:
     type: object
     properties:
       authority:
@@ -36572,15 +36572,15 @@ definitions:
         format: uint64
       owner:
         type: string
-  warden.warden.v1beta2.MsgRemoveSpaceOwnerResponse:
+  warden.warden.v1beta3.MsgRemoveSpaceOwnerResponse:
     type: object
-  warden.warden.v1beta2.MsgSignedData:
+  warden.warden.v1beta3.MsgSignedData:
     type: object
     properties:
       signed_data:
         type: string
         format: byte
-  warden.warden.v1beta2.MsgUpdateKey:
+  warden.warden.v1beta3.MsgUpdateKey:
     type: object
     properties:
       authority:
@@ -36591,7 +36591,7 @@ definitions:
       intent_id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgUpdateKeyRequest:
+  warden.warden.v1beta3.MsgUpdateKeyRequest:
     type: object
     properties:
       creator:
@@ -36629,11 +36629,11 @@ definitions:
             format: byte
       reject_reason:
         type: string
-  warden.warden.v1beta2.MsgUpdateKeyRequestResponse:
+  warden.warden.v1beta3.MsgUpdateKeyRequestResponse:
     type: object
-  warden.warden.v1beta2.MsgUpdateKeyResponse:
+  warden.warden.v1beta3.MsgUpdateKeyResponse:
     type: object
-  warden.warden.v1beta2.MsgUpdateKeychain:
+  warden.warden.v1beta3.MsgUpdateKeychain:
     type: object
     properties:
       creator:
@@ -36654,9 +36654,9 @@ definitions:
           sig_req:
             type: string
             format: int64
-  warden.warden.v1beta2.MsgUpdateKeychainResponse:
+  warden.warden.v1beta3.MsgUpdateKeychainResponse:
     type: object
-  warden.warden.v1beta2.MsgUpdateParams:
+  warden.warden.v1beta3.MsgUpdateParams:
     type: object
     properties:
       authority:
@@ -36671,12 +36671,12 @@ definitions:
           NOTE: All parameters must be supplied.
         type: object
     description: MsgUpdateParams is the Msg/UpdateParams request type.
-  warden.warden.v1beta2.MsgUpdateParamsResponse:
+  warden.warden.v1beta3.MsgUpdateParamsResponse:
     type: object
     description: |-
       MsgUpdateParamsResponse defines the response structure for executing a
       MsgUpdateParams message.
-  warden.warden.v1beta2.MsgUpdateSpace:
+  warden.warden.v1beta3.MsgUpdateSpace:
     type: object
     properties:
       authority:
@@ -36690,12 +36690,12 @@ definitions:
       sign_intent_id:
         type: string
         format: uint64
-  warden.warden.v1beta2.MsgUpdateSpaceResponse:
+  warden.warden.v1beta3.MsgUpdateSpaceResponse:
     type: object
-  warden.warden.v1beta2.Params:
+  warden.warden.v1beta3.Params:
     type: object
     description: Params defines the parameters for the module.
-  warden.warden.v1beta2.SignMethod:
+  warden.warden.v1beta3.SignMethod:
     type: string
     enum:
       - SIGN_METHOD_BLACK_BOX
@@ -36713,7 +36713,7 @@ definitions:
       transaction.
        - SIGN_METHOD_OSMOSIS: Sign method Osmosis means that the input will be parsed as an Osmosis
       transaction.
-  warden.warden.v1beta2.SignRequestStatus:
+  warden.warden.v1beta3.SignRequestStatus:
     type: string
     enum:
       - SIGN_REQUEST_STATUS_UNSPECIFIED
