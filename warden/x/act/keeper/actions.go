@@ -8,6 +8,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/warden-protocol/wardenprotocol/shield"
 	"github.com/warden-protocol/wardenprotocol/shield/object"
@@ -60,6 +61,8 @@ func (k Keeper) executeAction(ctx context.Context, act *types.Action) error {
 	if err != nil {
 		return fmt.Errorf("unpacking Action.Msg: %w", err)
 	}
+
+	defer telemetry.MeasureSince(telemetry.Now(), sdk.MsgTypeURL(msg))
 
 	handler := k.router.Handler(msg)
 	if handler == nil {
@@ -149,8 +152,10 @@ func (k Keeper) AddAction(ctx context.Context, creator string, msg sdk.Msg, time
 		return nil, err
 	}
 
+	parsingTs := telemetry.Now()
 	ctxWithMsg := cosmoshield.NewContext(ctx, msg)
 	preprocessedExpr, mentions, err := k.preprocessRule(ctxWithMsg, rule)
+	telemetry.MeasureSince(parsingTs, "rule_preprocessing", sdk.MsgTypeURL(msg))
 	if err != nil {
 		return nil, err
 	}
@@ -182,6 +187,8 @@ func (k Keeper) AddAction(ctx context.Context, creator string, msg sdk.Msg, time
 	if _, err := k.ActionKeeper.New(ctx, act); err != nil {
 		return nil, err
 	}
+
+	telemetry.IncrCounter(1, "action", "count")
 
 	// try executing the action immediately
 	if err := k.TryExecuteAction(ctx, act); err != nil {

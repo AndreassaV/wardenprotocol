@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	types "github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
@@ -63,6 +64,8 @@ func (k msgServer) NewSignRequest(ctx context.Context, msg *types.MsgNewSignRequ
 	}); err != nil {
 		return nil, err
 	}
+
+	telemetry.IncrCounter(1, "new_signature_request", "msg", "count")
 
 	return &types.MsgNewSignRequestResponse{Id: id}, nil
 }
