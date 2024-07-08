@@ -135,7 +135,7 @@ export function AssetsPage() {
 			</div>
 
 			<div className="grid grid-cols-[320px_1fr] gap-[24px]">
-				<div className="bg-card -bg relative overflow-hidden flex flex-col justify-between isolate py-6 px-8 rounded-xl">
+				<div className="bg-pink-secondary  relative overflow-hidden flex flex-col justify-between isolate py-6 px-8 rounded-xl">
 					<img
 						src="/images/asset-decor.png"
 						alt=""
@@ -306,18 +306,19 @@ export function AssetsPage() {
 										onClick={() =>
 											setAllKeysVisible(!isAllKeysVisible)
 										}
-										className="cursor-pointer group relative h-8 rounded-2xl bg-secondary-bg py-2 px-3 text-xs text-white flex items-center gap-[2px]"
+										className="cursor-pointer group relative h-8 rounded-2xl bg-fill-quaternary py-2 px-3 text-xs fill-quaternary flex items-center gap-[2px]"
 									>
 										All Keys
 										<Icons.chevronDown
-											className={
+											className={clsx(
+												"invert dark:invert-0",
 												isAllKeysVisible
 													? "rotate-180"
-													: ""
-											}
+													: "",
+											)}
 										/>
 										{isAllKeysVisible && (
-											<div className="w-[248px] bg-secondary-bg text-white text-sm rounded-lg  py-2 absolute z-10 bottom-[-8px] right-0 whitespace-nowrap backdrop-blur-[30px] translate-y-[100%] ">
+											<div className="w-[248px] bg-fill-quaternary text-sm rounded-lg  py-2 absolute z-10 bottom-[-8px] right-0 whitespace-nowrap backdrop-blur-[30px] translate-y-[100%] ">
 												<div className="cursor-pointer h-10 px-4 flex items-center gap-3">
 													<img
 														src="/images/key.png"
@@ -325,7 +326,7 @@ export function AssetsPage() {
 														alt=""
 													/>
 													All Keys
-													<Icons.check className="ml-auto" />
+													<Icons.check className="ml-auto invert dark:invert-0" />
 												</div>
 												{queryKeys.data?.keys.map(
 													(key) => (
@@ -355,18 +356,19 @@ export function AssetsPage() {
 												!isAllNetworksVisible,
 											)
 										}
-										className="cursor-pointer group relative h-8 rounded-2xl bg-secondary-bg py-2 px-3 text-xs text-white flex items-center gap-[2px]"
+										className="cursor-pointer group relative h-8 rounded-2xl bg-fill-quaternary py-2 px-3 text-xs  flex items-center gap-[2px]"
 									>
 										All Networks
 										<Icons.chevronDown
-											className={
+											className={clsx(
+												"invert dark:invert-0",
 												isAllNetworksVisible
 													? "rotate-180"
-													: ""
-											}
+													: "",
+											)}
 										/>
 										{isAllNetworksVisible && (
-											<div className="w-[248px] bg-secondary-bg text-white text-sm rounded-lg  py-2 absolute z-10 bottom-[-8px] right-0 whitespace-nowrap backdrop-blur-[30px] translate-y-[100%] ">
+											<div className="w-[248px] bg-fill-quaternary text-sm rounded-lg  py-2 absolute z-10 bottom-[-8px] right-0 whitespace-nowrap backdrop-blur-[30px] translate-y-[100%] ">
 												<div className="cursor-pointer h-10 px-4 flex items-center gap-3">
 													<img
 														src="/images/networks.png"
@@ -374,7 +376,7 @@ export function AssetsPage() {
 														alt=""
 													/>
 													All Networks
-													<Icons.check className="ml-auto" />
+													<Icons.check className="ml-auto invert dark:invert-0" />
 												</div>
 												{chains.map((chainName) => {
 													const Network =
@@ -467,7 +469,7 @@ export function AssetsPage() {
 
 									<div className="flex items-center justify-end gap-2">
 										<button
-											className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4"
+											className=" bg-fill-quaternary h-8 rounded justify-center font-medium py-1 px-4"
 											onClick={modalDispatch.bind(null, {
 												type: "set",
 												payload: {
@@ -489,7 +491,7 @@ export function AssetsPage() {
 											Receive
 										</button>
 										<button
-											className=" text-white bg-secondary-bg h-8 rounded justify-center font-medium py-1 px-4"
+											className=" bg-fill-quaternary h-8 rounded justify-center font-medium py-1 px-4"
 											onClick={modalDispatch.bind(null, {
 												type: "set",
 												payload: {
